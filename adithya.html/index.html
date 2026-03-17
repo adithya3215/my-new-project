@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern 3D Portfolio</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES & DESIGN SYSTEM --- */
+        :root {
+            --bg-color: #0f172a;
+            --primary-gradient: linear-gradient(135deg, #6b21a8, #2563eb);
+            --secondary-cyan: #22d3ee;
+            --secondary-pink: #f472b6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Custom cursor */
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-cyan);
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary-pink);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* --- 3D BACKGROUND CANVAS --- */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: var(--font-heading); }
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- LAYOUT & UTILITIES --- */
+        section {
+            min-height: 100vh;
+            padding: 100px 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 30px var(--secondary-cyan);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--secondary-cyan);
+            border: 2px solid var(--secondary-cyan);
+        }
+        .btn-outline:hover {
+            background: var(--secondary-cyan);
+            color: #000;
+            box-shadow: 0 0 20px var(--secondary-cyan);
+        }
+
+        /* --- NAVBAR --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; font-family: var(--font-heading); color: #fff; text-decoration: none; }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { color: var(--text-main); text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: var(--secondary-cyan); }
+
+        /* --- HERO SECTION --- */
+        #home { align-items: flex-start; }
+        .hero-content { max-width: 600px; }
+        .hero-title { font-size: 4.5rem; line-height: 1.1; margin-bottom: 1rem; }
+        .hero-subtitle { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 2rem; }
+        .hero-btns { display: flex; gap: 1rem; }
+
+        /* --- SKILLS SECTION --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .skill-card {
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .skill-card:hover { transform: translateY(-10px); }
+        .skill-icon { font-size: 3rem; color: var(--secondary-cyan); margin-bottom: 1rem; }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: var(--primary-gradient);
+            width: 0; /* Animated via JS */
+            transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* --- RESUME & EXPERIENCE SECTION --- */
+        .timeline {
+            border-left: 2px solid var(--secondary-pink);
+            padding-left: 2rem;
+            margin-left: 1rem;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--bg-color);
+            border: 3px solid var(--secondary-pink);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--secondary-pink);
+        }
+        .timeline-date { color: var(--secondary-cyan); font-weight: bold; margin-bottom: 0.5rem; }
+
+        /* --- PROJECTS SECTION (3D FLIP CARDS) --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 350px;
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .flip-card-front {
+            background: var(--primary-gradient);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .flip-card-front h3 { font-size: 2rem; }
+        .flip-card-back {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transform: rotateY(180deg);
+        }
+        .flip-card-back p { margin-bottom: 1.5rem; color: var(--text-muted); }
+
+        /* --- CONTACT SECTION --- */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--secondary-cyan);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+        }
+        .social-links { margin-top: 2rem; display: flex; gap: 1.5rem; }
+        .social-links a {
+            color: #fff;
+            font-size: 1.8rem;
+            transition: all 0.3s;
+        }
+        .social-links a:hover {
+            color: var(--secondary-pink);
+            transform: scale(1.2);
+            text-shadow: 0 0 15px var(--secondary-pink);
+        }
+
+        /* --- SCROLL ANIMATIONS (Reveal) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .contact-container { grid-template-columns: 1fr; }
+            nav ul { display: none; /* Add mobile menu logic if needed */ }
+            section { padding: 100px 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- 3D Background Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Header / Nav -->
+    <header>
+        <a href="#home" class="logo">Port<span style="color: var(--secondary-cyan)">folio.</span></a>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#certificates">Certificates</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home">
+        <div class="hero-content reveal">
+            <h1 class="hero-title">Hi, I'm <br><span class="gradient-text">John Doe</span></h1>
+            <p class="hero-subtitle">Creative Developer | UI/UX Designer | AI Enthusiast</p>
+            <div class="hero-btns">
+                <a href="#projects" class="btn btn-primary">View Work</a>
+                <a href="#contact" class="btn btn-outline">Contact Me</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2 class="section-title reveal">My <span class="gradient-text">Skills</span></h2>
+        <div class="skills-grid">
+            <div class="skill-card glass-panel reveal">
+                <i class="fa-brands fa-html5 skill-icon"></i>
+                <h3>Frontend</h3>
+                <p class="text-muted">HTML, CSS, React, Three.js</p>
+                <div class="progress-bar"><div class="progress" data-width="90%"></div></div>
+            </div>
+            <div class="skill-card glass-panel reveal">
+                <i class="fa-brands fa-node-js skill-icon" style="color:#f472b6;"></i>
+                <h3>Backend</h3>
+                <p class="text-muted">Node.js, Express, Python</p>
+                <div class="progress-bar"><div class="progress" data-width="75%"></div></div>
+            </div>
+            <div class="skill-card glass-panel reveal">
+                <i class="fa-solid fa-wand-magic-sparkles skill-icon" style="color:var(--primary-gradient);"></i>
+                <h3>UI/UX & AI</h3>
+                <p class="text-muted">Figma, AI Prompts, Generative Art</p>
+                <div class="progress-bar"><div class="progress" data-width="85%"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resume / Experience Section -->
+    <section id="experience">
+        <h2 class="section-title reveal">Work <span class="gradient-text">Experience</span></h2>
+        <div class="timeline reveal">
+            <div class="timeline-item glass-panel">
+                <div class="timeline-date">2023 - Present</div>
+                <h3>Senior Creative Developer</h3>
+                <h4>TechNova Solutions</h4>
+                <p style="color: var(--text-muted); margin-top: 10px;">Lead the frontend architecture using React and Three.js. Implemented immersive 3D web experiences that increased user retention by 40%.</p>
+            </div>
+            <div class="timeline-item glass-panel">
+                <div class="timeline-date">2020 - 2023</div>
+                <h3>UI/UX Engineer</h3>
+                <h4>Design Flow Agency</h4>
+                <p style="color: var(--text-muted); margin-top: 10px;">Bridged the gap between design and engineering. Created fully responsive, glassmorphism-based design systems.</p>
+            </div>
+            <a href="#" class="btn btn-outline" style="margin-top: 1rem;"><i class="fa-solid fa-download"></i> Download Full Resume</a>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2 class="section-title reveal">Featured <span class="gradient-text">Projects</span></h2>
+        <div class="projects-grid">
+            <!-- Project 1 -->
+            <div class="flip-card reveal">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <i class="fa-solid fa-vr-cardboard" style="font-size: 3rem; margin-bottom:1rem;"></i>
+                        <h3>Metaverse UI</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <h3>Metaverse UI</h3>
+                        <p>A web-based virtual reality interface built with React Three Fiber.</p>
+                        <a href="#" class="btn btn-outline">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Project 2 -->
+            <div class="flip-card reveal">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front" style="background: linear-gradient(135deg, #10b981, #3b82f6);">
+                        <i class="fa-solid fa-robot" style="font-size: 3rem; margin-bottom:1rem;"></i>
+                        <h3>AI Image Gen</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <h3>AI Image Gen</h3>
+                        <p>SaaS platform wrapping Stable Diffusion API with a custom neumorphic UI.</p>
+                        <a href="#" class="btn btn-outline">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Project 3 -->
+            <div class="flip-card reveal">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front" style="background: linear-gradient(135deg, #f43f5e, #8b5cf6);">
+                        <i class="fa-solid fa-chart-line" style="font-size: 3rem; margin-bottom:1rem;"></i>
+                        <h3>Crypto Dash</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <h3>Crypto Dash</h3>
+                        <p>Real-time cryptocurrency dashboard with dark mode and glowing charts.</p>
+                        <a href="#" class="btn btn-outline">Live Demo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificates Section -->
+    <section id="certificates">
+        <h2 class="section-title reveal">My <span class="gradient-text">Certificates</span></h2>
+        <div class="skills-grid">
+            <div class="glass-panel reveal" style="text-align: center;">
+                <i class="fa-solid fa-certificate" style="font-size: 2.5rem; color: var(--secondary-pink); margin-bottom:1rem;"></i>
+                <h3>Google UX Design</h3>
+                <p style="color: var(--text-muted);">Coursera - 2022</p>
+            </div>
+            <div class="glass-panel reveal" style="text-align: center;">
+                <i class="fa-solid fa-certificate" style="font-size: 2.5rem; color: var(--secondary-cyan); margin-bottom:1rem;"></i>
+                <h3>Advanced React Patterns</h3>
+                <p style="color: var(--text-muted);">Frontend Masters - 2023</p>
+            </div>
+            <div class="glass-panel reveal" style="text-align: center;">
+                <i class="fa-solid fa-certificate" style="font-size: 2.5rem; color: #a855f7; margin-bottom:1rem;"></i>
+                <h3>Three.js Journey</h3>
+                <p style="color: var(--text-muted);">Bruno Simon - 2024</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title reveal">Get In <span class="gradient-text">Touch</span></h2>
+        <div class="contact-container reveal">
+            <div class="contact-info">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Let's talk about your next project.</h3>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">I'm currently available for freelance work and open to new opportunities.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-github"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+            <form class="contact-form glass-panel">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Three.js CDN for Background 3D effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = ${posX}px;
+            cursorDot.style.top = ${posY}px;
+            
+            // Adding a slight delay for the outline outline
+            cursorOutline.animate({
+                left: ${posX}px,
+                top: ${posY}px
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effects on links and buttons
+        const interactables = document.querySelectorAll('a, button, input, textarea');
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                cursorOutline.style.backgroundColor = 'rgba(244, 114, 182, 0.2)'; // Soft pink glow
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // --- SCROLL ANIMATION (REVEAL) ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const progressBars = document.querySelectorAll('.progress');
+
+        const revealCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    
+                    // If it's the skills section, animate progress bars
+                    if (entry.target.querySelector('.progress')) {
+                        const bar = entry.target.querySelector('.progress');
+                        bar.style.width = bar.getAttribute('data-width');
+                    }
+                }
+            });
+        };
+
+        const revealObserver = new IntersectionObserver(revealCallback, {
+            threshold: 0.15
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+
+        // --- THREE.JS IMMERSIVE 3D BACKGROUND ---
+        const canvas = document.querySelector('#webgl-canvas');
+        const scene = new THREE.Scene();
+        
+        // Add subtle fog to blend into the dark background
+        scene.fog = new THREE.FogExp2(0x0f172a, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.setZ(30);
+
+        // Geometries
+        const geometries = [
+            new THREE.TorusGeometry(10, 3, 16, 100),
+            new THREE.IcosahedronGeometry(7, 0),
+            new THREE.ConeGeometry(5, 10, 32)
+        ];
+
+        // Materials (Wireframe with Neon Cyan/Pink colors)
+        const materials = [
+            new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.15 }),
+            new THREE.MeshBasicMaterial({ color: 0xf472b6, wireframe: true, transparent: true, opacity: 0.15 }),
+            new THREE.MeshBasicMaterial({ color: 0x6b21a8, wireframe: true, transparent: true, opacity: 0.2 })
+        ];
+
+        // Create meshes and randomly place them
+        const shapes = [];
+        for(let i = 0; i < 15; i++) {
+            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+            const material = materials[Math.floor(Math.random() * materials.length)];
+            const mesh = new THREE.Mesh(geometry, material);
+            
+            // Random positioning
+            mesh.position.x = (Math.random() - 0.5) * 100;
+            mesh.position.y = (Math.random() - 0.5) * 100;
+            mesh.position.z = (Math.random() - 0.5) * 50 - 20;
+
+            // Random rotation
+            mesh.rotation.x = Math.random() * 2 * Math.PI;
+            mesh.rotation.y = Math.random() * 2 * Math.PI;
+
+            scene.add(mesh);
+            shapes.push({
+                mesh: mesh,
+                rotSpeedX: (Math.random() - 0.5) * 0.005,
+                rotSpeedY: (Math.random() - 0.5) * 0.005
+            });
+        }
+
+        // Mouse Parallax Interaction for 3D objects
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate individual shapes
+            shapes.forEach(shape => {
+                shape.mesh.rotation.x += shape.rotSpeedX;
+                shape.mesh.rotation.y += shape.rotSpeedY;
+            });
+
+            // Parallax Camera movement based on mouse
+            targetX = mouseX * 0.01;
+            targetY = mouseY * 0.01;
+            camera.position.x += (targetX - camera.position.x) * 0.05;
+            camera.position.y += (-targetY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adithya | Portfolio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #2a0f23;
+  color: #fff;
+  line-height: 1.6;
+}
+
+/* NAVBAR */
+nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 10%;
+  position: sticky;
+  top: 0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+nav h1 {
+  color: #38bdf8;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+}
+
+nav ul li {
+  margin-left: 20px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  transition: 0.3s;
+}
+
+nav ul li a:hover {
+  color: #38bdf8;
+}
+
+/* HERO */
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10%;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  max-width: 400px;
+}
+
+.hero-text h2 {
+  font-size: 2.8rem;
+}
+
+.hero-text span {
+  color: #38bdf8;
+}
+
+.hero-text p {
+  margin: 15px 0;
+  opacity: 0.8;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  background: #38bdf8;
+  color: #000;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  background: #0ea5e9;
+}
+
+.hero-img img {
+  width: 300px;
+  border-radius: 20px;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* SECTION */
+section {
+  padding: 80px 10%;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 2rem;
+}
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 15px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(56,189,248,0.3);
+}
+
+/* SKILLS */
+.skills span {
+  display: inline-block;
+  background: #38bdf8;
+  padding: 8px 15px;
+  border-radius: 20px;
+  margin: 5px;
+  font-size: 14px;
+}
+
+/* CONTACT */
+.contact form {
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  margin: chnge autoo;
+}
+
+.contact input, .contact textarea {
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+.contact button {
+  margin-top: 10px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #020617;
+  font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <h1>Adithya KN</h1>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#resume">resume</a><li></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#certificates">certificates</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h2>Hi, I'm <span>Adithya KN</span></h2>
+    <p>
+      Passionate developer building modern, scalable, and high-performance digital solutions.
+    </p>
+    <a href="#projects" class="btn">Explore Work</a>
+  </div>
+
+  <div class="hero-img">
+    <img src="c:\Users\Deepika B U\Downloads\WhatsApp Image 2026-03-17 at 12.41.16 PM.jpeg"profile">
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2 class="section-title">About Me</h2>
+  <p style="text-align:center; max-height:700px; margin:auto;">
+    “I’m Adithya, an aspiring developer continuously learning and building modern, responsive applications that solve real-world problems.”.
+  </p>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <h2 class="section-title">Projects</h2>
+  <div class="cards">
+
+    <div class="card">
+      <h3>Hotel Management System</h3>
+      <p>c:\Users\Deepika B U\Downloads\EmergingTechnology4 (1).pdf
+.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Booking Dashboard</h3>
+      <p>
+        Interactive dashboard to track reservations, manage rooms, and monitor
+        hotel operations in real-time.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Room Allocation Module</h3>
+      <p>
+        Smart module that automates room allocation and optimizes hotel resource usage.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!--RESUME-->
+<section id="resume">
+    <h2>Resume</h2>
+    <p>donlowed my resume to learn more about my experience, skills, and projects.</p>
+
+    <!-- Resume Download Button -->
+    <a href="c:\Users\Deepika B U\Downloads\resum adithiya (1).pdf" download=c:\Users\Deepika B U\Downloads\resum adithiya (1).pdf>
+        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            Download Resume
+        </button>
+    </a>
+    </section>
+
+<!--CERTIFICATES-->
+<section id="certifications">
+    <h2>My Certifications</h2>
+    <p>Download my Certifications to learn more about my experience, skills, and projects.</p>
+    <!-- Certificate 1 View Button -->
+    <a href="c:\Users\Deepika B U\Downloads\IBMDesign20251127-31-6r9dun (1).pdf" download="c:\Users\Deepika B U\Downloads\IBMDesign20251127-31-6r9dun (1).pdf">
+        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            View Certificate 1
+        </button>
+        <!-- Certificate 2 View Button -->
+    <a href="c:\Users\Deepika B U\Downloads\IBMDesign20251127-31-c614xk.pdf" download="c:\Users\Deepika B U\Downloads\IBMDesign20251127-31-c614xk.pdf">
+        <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            View Certificate 2
+        </button>
+    
+    </div>
+</section>
+
+    
+
+  
+ 
+<!-- SKILLS -->
+<section id="skills">
+  <h2 class="section-title">Skills</h2>
+  <div class="skills" style="text-align:center;">
+    <span>JavaScript</span>
+    <span>Python</span>
+    <span>C++</span>
+    <span>html</span>span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="">
+  <h2 class="section-title">Contact</h2>
+  <form>
+    <input type="text" placeholder="" required>
+    <input type="email" placeholder="" required>
+    <textarea rows="5" placeholder=""></textarea>
+    <button class="btn">Send Message</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2026 Adithya | Built with innovation ⚡
+</footer>
+
+</body>
+</html
